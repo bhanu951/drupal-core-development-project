@@ -7,3 +7,4 @@ web/modules/contrib/
 .DS_Store
 web/core
 web/sites/default/
+web/sites/sites.php
