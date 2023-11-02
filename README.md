@@ -40,6 +40,7 @@ either with `drush si` or with the web UI.
 First, create the folder for your project and `cd` into it. Then:
 
 ```
+
 ddev config --project-type=drupal10 --docroot=web --create-docroot
 ddev start
 ddev composer create joachim-n/drupal-core-development-project
@@ -88,6 +89,7 @@ The simplest way to run tests with this setup is to put the phpunit.xml file in
 the project root and then run tests from there:
 
 ```
+
 vendor/bin/phpunit web/core/PATH-TO-TEST-FILE/TestFile.php
 ```
 
@@ -98,6 +100,7 @@ vendor/bin/phpunit web/core/PATH-TO-TEST-FILE/TestFile.php
 
 ```
 cp phpunit-ddev.xml phpunit.xml
+
 ```
 
 2. Change the BROWSERTEST_OUTPUT_BASE_URL value to the host URL of the project.
@@ -105,6 +108,7 @@ cp phpunit-ddev.xml phpunit.xml
 ##### On other platforms
 
 1. Copy Drupal core's sample `phpunit.xml.dist`` file to the project root and
+
 rename it to`phpunit.xml`:
 
 ```
