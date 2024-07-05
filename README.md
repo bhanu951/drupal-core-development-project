@@ -2,14 +2,24 @@
 
 This is a Composer project template for developing Drupal core.
 
-It allows:
+It allows the following:
 
-- a clean git clone of Drupal core.
+- A clean git clone of Drupal core.
 - Composer dependencies of Drupal core are installed, so Drupal can be installed
   and run as normal.
-- other Composer packages you might want, such as Drush, Devel module, and Admin
-  Toolbar module, can be installed too, but don't affect the composer files
-  that are part of Drupal core.
+- Other Composer packages you might want, such as Drush, Devel module, Admin
+  Toolbar module, and Devel Accessibility can be installed too, but don't affect
+  the composer files that are part of Drupal core.
+- Contrib modules can be installed with Composer (normally Composer would refuse
+  to install them because their info.yml file does not declare compatibility
+  with core 11.x).
+- Other packages, including contrib modules, can be installed as git clones to
+  develop them in tandem with Drupal core.
+
+## Roadmap
+
+Get this into Drupal core! See
+https://www.drupal.org/project/drupal/issues/1792310.
 
 ## Roadmap
 
@@ -17,6 +27,8 @@ Get this into Drupal core! See
 https://www.drupal.org/project/drupal/issues/1792310.
 
 ## Installation
+
+### Basic installation
 
 To install a Drupal project for working on Drupal core:
 
@@ -37,14 +49,77 @@ either with `drush si` or with the web UI.
 
 ### Installation on DDEV
 
-First, create the folder for your project and `cd` into it. Then:
+First, make sure your DDEV version is at least 1.23.0. Next, create a new folder
+for your project and `cd` into it. Then:
 
 ```
-
-ddev config --project-type=drupal10 --docroot=web --create-docroot
-ddev start
-ddev composer create joachim-n/drupal-core-development-project
+$ ddev config --project-type=drupal --php-version=8.3
+$ ddev start
+$ ddev composer create joachim-n/drupal-core-development-project
+$ ddev config --update
+$ ddev restart
 ```
+
+### Installation on DDEV with the justafish/ddev-drupal-core-dev DDEV addon
+
+To use the justafish/ddev-drupal-core-dev DDEV addon, you need to make the
+following changes to the installation instructions for that addon:
+
+- For `ddev config`, specify --project-type=drupal
+- Do `composer install` before doing `ddev get justafish/ddev-drupal-core-dev`
+- Do `ln -s web/autoload.php .` so the addon's `ddev drupal` command find the
+  autoloader. (There is a merge request to remove the need for this:
+  https://github.com/justafish/ddev-drupal-core-dev/pull/35)
+- DO NOT do `drupal install`. Instead, do `ddev drush si --db-url=sqlite://sites/default/files/.ht.sqlite?module=sqlite -y`
+  (You might need to manually create web/sites/default/files first)
+  The `drupal install` command does not work when the drupal package is
+  symlinked in by Composer.
+
+To run PHPUnit tests, you will need to tweak the DDEV phpunit command until
+https://github.com/justafish/ddev-drupal-core-dev/pull/37 is fixed.
+
+## Installing other packages
+
+You can install any Composer package as you would with a normal project. This
+will not affect Drupal core.
+
+To work with Composer, you need to be in the root directory of the project, not
+in the Drupal core folders.
+
+If Drupal core is checked out at a feature branch, Composer may complain that
+dependencies are not met, because it does not see the feature branch as
+satisfying the dependency. You can either:
+
+- Temporarily switch Drupal code back to the main branch, do Composer tasks,
+  then switch it back.
+- Define the version in the `repositories` section of the project composer.json.
+- Define a branch alias in the project composer.json.
+
+### Installing other packages from path repositories
+
+You can install additional packages from a path repository, in the same way that
+Drupal core is installed (although other packages will no require all the tweaks
+that Drupal core does!). This can be useful to develop packages and modules in
+tandem with core.
+
+1. Create a git clone of the module or package. The `repos/` folder can be used
+   for this. It's simplest to start off from a main branch so that Composer sees
+   this as the installed version, and dependencies work properly.
+2. Define a path respository for the package. See
+   https://getcomposer.org/doc/05-repositories.md#path for details.
+3. Do `composer require` for the package.
+
+You can now switch the package to a feature branch, such as one from a merge
+request, in order to work on a feature or bug.
+
+If you need to perform Composer operations, Composer may complain that the
+feature branch does not satisfy requirements. You can do one of:
+
+* Check out the main branch with git, perform the Composer operations, then
+  return to the feature branch.
+* Define the version that Composer sees for this package by specifying the
+  "versions" option in the declaration of the path repository in
+  `composer.json`.
 
 ## Limitations
 
@@ -63,21 +138,18 @@ These are harmless and can be ignored.
 
 ## Developing Drupal core
 
-You can use the Drupal core git clone at 'repos/drupal/' in any way you like:
+You can use the Drupal core git clone at `repos/drupal/` in any way you like:
 create feature branches, clone from drupal.org issue forks, and so on. Changes
 you make to files in the git clone affect the project, since the git clone is
 symlinked into it.
 
 ### Managing the Composer project
 
-You can install any Composer packages you like, including Drupal contrib
-modules, without affecting the git clone of Drupal core. To work with Composer,
-you need to be in the root directory of the project.
-
-Changes to the git clone's composer.json will be taken into account by Composer.
-So for example, if pulling from the main branch of Drupal core changes Composer
-dependencies, and in particular if you change to a different core major or minor
-branch, you should run `composer update` on the project to install these.
+Changes to the Drupal core git clone's composer.json will be taken into account
+by Composer. So for example, if pulling from the main branch of Drupal core
+changes Composer dependencies, and in particular if you change to a different
+core major or minor branch, you should run `composer update` on the project to
+install these.
 
 ### Running tests
 
@@ -89,8 +161,7 @@ The simplest way to run tests with this setup is to put the phpunit.xml file in
 the project root and then run tests from there:
 
 ```
-
-vendor/bin/phpunit web/core/PATH-TO-TEST-FILE/TestFile.php
+$ vendor/bin/phpunit web/core/PATH-TO-TEST-FILE/TestFile.php
 ```
 
 ##### On DDEV
@@ -99,8 +170,7 @@ vendor/bin/phpunit web/core/PATH-TO-TEST-FILE/TestFile.php
    `phpunit.xml`:
 
 ```
-cp phpunit-ddev.xml phpunit.xml
-
+$ cp phpunit-ddev.xml phpunit.xml
 ```
 
 2. Change the BROWSERTEST_OUTPUT_BASE_URL value to the host URL of the project.
@@ -108,22 +178,21 @@ cp phpunit-ddev.xml phpunit.xml
 ##### On other platforms
 
 1. Copy Drupal core's sample `phpunit.xml.dist`` file to the project root and
-
-rename it to`phpunit.xml`:
+rename it to `phpunit.xml`:
 
 ```
-cp web/core/phpunit.xml.dist phpunit.xml
+$ cp web/core/phpunit.xml.dist phpunit.xml
 ```
 
 2. Change the `bootstrap` attribute so the path is correct:
 
 ```
-<phpunit bootstrap="web/core/tests/bootstrap.php"
+bootstrap="web/core/tests/bootstrap.php"
 ```
 
 ### Debugging
 
-You can set up debugging in an IDE that's open at the repos/drupal folder, so
+You can set up debugging in an IDE that's open at the `repos/drupal` folder, so
 that it recognises the process being run from the project root.
 
 For example, in VSCode, this is done as follows in the debugger configuration:
@@ -155,6 +224,9 @@ packages are defined as path repositories, so that the package versions which
 are fixed in those metapackages are respected in the project. This means the
 same versions are installed as if installing Composer packages on a plain git
 clone of Drupal core.
+
+Contrib modules are made installable with the ComposerCoreVersionsLeniency
+Composer script.
 
 ### Manual Installation
 

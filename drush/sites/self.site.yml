@@ -1,0 +1,18 @@
+#
+# A minimalist Drush site alias file.
+# See https://www.drush.org/latest/site-aliases/ for lots more documentation.
+#
+# File: self.site.yml
+local:
+  root: "${env.DDEV_COMPOSER_ROOT}/web/sites/default"
+  uri: ${env.DDEV_PRIMARY_URL}
+  paths:
+    drush-script: "${env.DDEV_COMPOSER_ROOT}/vendor/bin/drush"
+  env-vars:
+    PATH: ${env.PATH}
+    DRUPAL_ENV: Local
+  command:
+    site:
+      install:
+        options:
+          admin-password: 'admin'
