@@ -1,5 +1,4 @@
-name: drupal-core
-type: drupal10
+type: drupal
 docroot: web
 php_version: "8.3"
 webserver_type: nginx-fpm
@@ -10,14 +9,16 @@ additional_hostnames: []
 additional_fqdns: []
 database:
   type: mariadb
-  version: "10.4"
+  version: "10.11"
 nfs_mount_enabled: false
 mutagen_enabled: false
 use_dns_when_possible: true
 composer_version: "2"
 web_environment: []
 # webimage_extra_packages: [python3, python3-pip]
-nodejs_version: "18"
+nodejs_version: "20"
+project_tld: local
+timezone: Asia/Kolkata
 hooks:
   post-start:
   - exec: mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS phpunit; GRANT ALL ON phpunit.* to 'db'@'%';"

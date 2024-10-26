@@ -42,11 +42,13 @@
     ],
     "require": {
         "composer/installers": "^1.9 | ^2",
-        "drupal/core-composer-scaffold": "*",
-        "drupal/drupal": "*",
+        "drupal/admin_toolbar": "^3.5",
         "drupal/core": "*",
+        "drupal/core-composer-scaffold": "*",
         "drupal/core-dev": "*",
         "drupal/core-recommended": "*",
+        "drupal/devel": "^5.3",
+        "drupal/drupal": "*",
         "drush/drush": "^13",
         "phpspec/prophecy-phpunit": "*",
         "symfony/var-dumper": "*"
@@ -62,7 +64,8 @@
             "drupal/core-composer-scaffold": true,
             "php-http/discovery": true,
             "phpstan/extension-installer": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "tbachert/spi": true
         }
     },
     "scripts": {
