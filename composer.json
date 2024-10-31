@@ -121,5 +121,11 @@
                 "type:drupal-custom-theme"
             ]
         }
+    },
+    "require-dev": {
+        "mglaman/phpstan-drupal": "^1.3",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^1.12",
+        "phpstan/phpstan-deprecation-rules": "^1.2"
     }
 }
