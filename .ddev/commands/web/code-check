@@ -22,13 +22,30 @@
 
 # cSpell:disable
 
+TOP_LEVEL="/var/www/html/repos/drupal"
+cd $TOP_LEVEL/core
+
+printf "\033[0;33mIf you have just started DDEV wait for couple of minutes \n"
+printf "before using {ddev code-check} command, mutagen file sync of \n"
+printf "node_modules takes time.\n\033[0m"
+
+corepack enable
+
+echo "NPM Version :"
+npm --version
+
+echo "Yarn Version :"
+yarn --version
+
 # Installs dependencies if not already run.
 if [ ! -d /var/www/html/repos/drupal/core/node_modules/.bin ]; then
+
+  corepack enable
+
   yarn --cwd /var/www/html/repos/drupal/core install
+
 fi
 
-TOP_LEVEL="/var/www/html/repos/drupal"
-cd $TOP_LEVEL
 
 # Searches an array.
 contains_element() {
@@ -98,7 +115,7 @@ if [[ "$BRANCH" != "" ]]; then
 elif [[ "$CACHED" == "0" ]]; then
   # For DrupalCI patch testing or when running without --cached or --branch,
   # list of all changes in the working directory.
-  FILES=$($GIT ls-files --other --modified --exclude-standard --exclude=vendor --exclude=node_modules --exclude=sites/simpletest --exclude=*.patch --exclude=.DS_Store)
+  FILES=$($GIT ls-files --other --modified --exclude-standard --exclude=vendor --exclude=node_modules --exclude=sites --exclude=*.patch --exclude=*.diff --exclude=.DS_Store)
 else
   # Check staged files only.
   if $GIT rev-parse --verify HEAD >/dev/null 2>&1
