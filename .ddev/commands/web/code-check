@@ -46,6 +46,7 @@ if [ ! -d /var/www/html/repos/drupal/core/node_modules/.bin ]; then
 
 fi
 
+cd $TOP_LEVEL
 
 # Searches an array.
 contains_element() {
